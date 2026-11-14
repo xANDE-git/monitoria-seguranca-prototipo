@@ -399,3 +399,39 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;line-height:1.15;l
   .phone,.desk{height:calc(100dvh - 140px);min-height:520px}
 }
 @media (max-width:380px){.tags span:nth-child(2){display:none}.demo-t{font-size:12px;padding:7px 9px}}
+
+/* ---------- cabeçalho fino + modo foco ---------- */
+.cbtn,.clock{color:var(--ink)}
+.cbtn.on,.cbtn.prim{color:#fff}
+.clock strong{color:var(--ink)}.clock span{color:var(--muted)}
+.demo-t{color:#fff}.demo-t[aria-expanded=true]{color:var(--sage-d)}
+.bar-in{padding-top:7px;padding-bottom:7px}
+.logo{gap:11px}
+.logo-mark{width:38px;height:38px;border-radius:12px;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand b{font-size:19px}
+.tags{margin-top:0}
+.tags span{font-size:12px;color:#fff;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.14)}
+.bar::after{height:3px}
+.demo-wrap .demo-in{padding-top:10px}
+.top-tab{display:none}
+body.focus .top{position:fixed;left:0;right:0;top:0;z-index:60;transform:translateY(-100%);transition:transform .35s cubic-bezier(.22,.8,.24,1);box-shadow:0 10px 30px rgba(40,50,40,.25)}
+body.focus .top::before{content:"";position:absolute;left:0;right:0;top:100%;height:16px}
+body.focus .top:hover,body.focus .top:focus-within,body.focus.peek .top{transform:none}
+body.focus .bar{position:static}
+body.focus .switch{margin:0;max-width:none;padding:8px 20px 10px;background:var(--bg);justify-content:center;border-bottom:1px solid var(--line)}
+body.focus .switch button{max-width:200px}
+body.focus .top-tab{display:block;position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:55;width:54px;height:16px;border:0;border-radius:0 0 10px 10px;background:var(--sage-d);opacity:.55;transition:opacity .2s}
+body.focus .top-tab:hover{opacity:1}
+body.focus .top-tab::after{content:"";position:absolute;left:50%;top:3px;width:6px;height:6px;border:solid #fff;border-width:0 2px 2px 0;transform:translateX(-50%) rotate(45deg)}
+body.focus .stage{min-height:100dvh;padding:14px 20px;align-content:center}
+body.focus .dev-label{display:none}
+body.focus .phone{height:min(900px,calc(100dvh - 28px));width:min(412px,calc((100dvh - 28px)*.47))}
+body.focus .desk{height:calc(100dvh - 28px)}
+@media (max-width:640px){
+  .brand{gap:3px}.brand b{font-size:16px}
+  .tags span{font-size:10.5px}
+  body.focus .stage{padding:0}
+  body.focus .phone,body.focus .desk{height:100dvh;width:100%;min-height:0}
+  body.focus .switch{padding:8px 12px 10px}
+}

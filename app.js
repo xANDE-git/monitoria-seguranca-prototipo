@@ -325,6 +325,8 @@ function devOf(t) { const sc = t.closest('.screen'); return sc ? dev[sc.id.repla
 function loginAs(d, role) { d.s = { view: 'login', role, user: role, tab: role === 'resp' ? 'status' : 'inicio' }; }
 
 document.addEventListener('click', e => {
+  if (e.target.closest('#stage')) document.body.classList.add('focus');
+  else if (!e.target.closest('#top,#topTab')) document.body.classList.remove('peek');
   const t = e.target.closest('[data-act]'); if (!t) return;
   const a = t.dataset.act, d = devOf(t), D = t.dataset;
   if (a === 'bg') { if (e.target !== t) return; if (d.s.modal) d.s.modal = null; if (d.s.sheet) d.s.sheet = null; return render(); }
@@ -337,6 +339,7 @@ document.addEventListener('click', e => {
     case 'sound': S.sound = !S.sound; if (S.sound) beep('checkin'); return render();
     case 'reset': S = seed(); dev.phone.s = { view: 'login', role: 'mon' }; dev.desk.s = { view: 'login', role: 'resp' }; dev.phone.toast = dev.desk.toast = null; return render();
     case 'skiplogin': loginAs(dev.phone, 'mon'); loginAs(dev.desk, 'resp'); return render();
+    case 'peek': document.body.classList.toggle('peek'); return;
     case 'view': $('#stage').dataset.view = D.v; document.querySelectorAll('.switch button').forEach(b => b.classList.toggle('on', b.dataset.v === D.v)); return;
     /* auth */
     case 'role': d.s.role = D.role; d.s.err = null; return render();
