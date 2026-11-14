@@ -15,7 +15,7 @@ function render() {
     const keep = {};
     let fname = null, fpos = null, scrolls = [];
     if (el.contains(ae) && ae.name) { fname = ae.name; fpos = ae.selectionStart; }
-    const sg = d.s, sig = [sg.user, sg.view, sg.tab, sg.cfgTab, sg.screen, sg.sheet, sg.modal && sg.modal.kind + sg.modal.id, sg.chk].join('|'), same = sig === d.sig; d.sig = sig;
+    const sg = d.s, sig = [sg.user, sg.view, sg.tab, sg.cfgTab, sg.screen, sg.sheet, sg.modal && sg.modal.kind + sg.modal.id, sg.chk, sg.chkDone, sg.call, sg.per].join('|'), same = sig === d.sig; d.sig = sig;
     if (same) el.querySelectorAll('[name]').forEach(i => { if (i.type === 'radio') { if (i.checked) keep[i.name] = i.value; } else keep[i.name] = i.value; });
     if (!same) fname = null;
     el.querySelectorAll('.scroll,.rbody,.mbody,.auth,.auth-form,.mfull,.modal').forEach((n, i) => scrolls.push([n.className, n.scrollTop]));
@@ -29,7 +29,7 @@ function render() {
       const f = scrolls.find(([c]) => c === n.className && !used[c]); if (f) { used[f[0]] = 1; n.scrollTop = f[1]; }
     });
     if (fname) { const f = el.querySelector(`[name="${fname}"]`); if (f) { f.focus(); try { f.setSelectionRange(fpos, fpos); } catch (e) { } } }
-    el.classList.toggle('enter', !same);
+    el.classList.toggle('enter', !same); el.classList.toggle('swap', d.lastUser !== sg.user); d.lastUser = sg.user;
     if (d.toast) { el.insertAdjacentHTML('beforeend', `<div class="toast ${d.toast.kind} ${d.toast.shown ? '' : 'in'}" role="status">${ic(d.toast.kind === 'terra' ? 'warn' : 'bell')}<span>${esc(d.toast.msg)}</span></div>`); d.toast.shown = true; }
   });
   updateBar();
@@ -143,7 +143,7 @@ function vitalChart(from, keys, label) {
   keys.forEach(k => { g += `<rect x="${pl}" y="${Y(k.max)}" width="${W - pl - pr}" height="${Y(k.min) - Y(k.max)}" fill="${k.color}" opacity=".09"/><line x1="${pl}" x2="${W - pr}" y1="${Y(k.max)}" y2="${Y(k.max)}" stroke="${k.color}" stroke-dasharray="4 4" opacity=".55"/><line x1="${pl}" x2="${W - pr}" y1="${Y(k.min)}" y2="${Y(k.min)}" stroke="${k.color}" stroke-dasharray="4 4" opacity=".55"/>`; });
   days.forEach((d, i) => g += `<text x="${pl + i * cw + cw / 2}" y="${H - 8}" text-anchor="middle">${WD[d]} ${8 + d}</text>`);
   keys.forEach(k => {
-    g += `<polyline fill="none" stroke="${k.color}" stroke-width="2.2" stroke-linejoin="round" points="${vs.map(v => X(v) + ',' + Y(v[k.k])).join(' ')}"/>`;
+    g += `<polyline pathLength="1" fill="none" stroke="${k.color}" stroke-width="2.2" stroke-linejoin="round" points="${vs.map(v => X(v) + ',' + Y(v[k.k])).join(' ')}"/>`;
     vs.forEach(v => { const out = v[k.k] > k.max || v[k.k] < k.min; g += `<circle cx="${X(v)}" cy="${Y(v[k.k])}" r="${out ? 6 : 4}" fill="${out ? '#B4432C' : k.color}" stroke="#fff" stroke-width="2"><title>${dayLabel(v.d)} ${v.hora}: ${v[k.k]}${out ? ' (fora do limite)' : ''}</title></circle>${out ? `<text x="${X(v)}" y="${Y(v[k.k]) - 10}" text-anchor="middle" style="fill:#8F3220;font-weight:700">${v[k.k]}</text>` : ''}`; });
   });
   return `<div class="legend">${keys.map(k => `<span><i style="background:${k.color}"></i>${k.name} · faixa ${k.min}–${k.max}</span>`).join('')}<span><i style="background:#B4432C"></i>fora do limite</span></div><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${g}</svg>`;
@@ -181,8 +181,10 @@ function respApp(d) {
   const s = d.s, tab = s.tab || 'status', st = statusOf(), n = openAlerts().length, mon = S.users.mon;
   const nav = [['status', 'home', 'Status'], ['verificar', 'send', 'Verificar'], ['historico', 'chart', 'Histórico'], ['relatorio', 'file', 'Relatório'], ['config', 'sliders', 'Configurar']];
   const titles = { status: ['Status de ' + first(mon.nome), 'Situação atual, alertas abertos e o dia de hoje.'], verificar: ['Verificar agora', 'Peça uma resposta ao monitorado com uma mensagem pronta.'], historico: ['Histórico', 'Últimos dias: sono, pressão, batimentos, remédios e alertas.'], relatorio: ['Relatório semanal', 'Resumo de 8 a 14 de novembro.'], config: ['Configurações de cadastro', 'O que você muda aqui aparece na hora no celular do monitorado.'] };
-  const sos = openAlerts().find(a => a.tipo === 'sos');
-  const emerg = sos ? `<div class="emerg" role="alert">${ic('warn')}<span>SOS acionado às ${sos.hora}: ${esc(mon.nome)} precisa de ajuda.</span><button class="btn sm" data-act="ligar">Ligar agora</button><button class="btn sm" data-act="resolver" data-id="${sos.id}">Encerrar</button></div>` : '';
+  const sos = openAlerts().find(a => a.tipo === 'sos'), now = Date.now();
+  if (d.lastSt !== undefined && d.lastSt !== st) d.chgAt = now; d.lastSt = st;
+  if (sos && d.lastSos !== sos.id) d.sosAt = now; d.lastSos = sos ? sos.id : null;
+  const emerg = sos ? `<div class="emerg${now - (d.sosAt || 0) < 700 ? ' in' : ''}" role="alert">${ic('warn')}<span>SOS acionado às ${sos.hora}: ${esc(mon.nome)} precisa de ajuda.</span><button class="btn sm" data-act="ligar">Ligar agora</button><button class="btn sm" data-act="resolver" data-id="${sos.id}">Encerrar</button></div>` : '';
   return `<div class="rapp"><aside class="rnav"><div class="who"><b>${esc(S.users.resp.nome)}</b><span class="sub">Responsável por ${esc(first(mon.nome))}</span></div>
   ${nav.map(([k, i, l]) => `<button class="ni ${tab === k ? 'on' : ''}" data-act="tab" data-t="${k}">${ic(i)}<span>${l}</span>${k === 'status' && n ? `<span class="n">${n}</span>` : ''}</button>`).join('')}
   <div class="foot"><button class="ni" data-act="logout" style="width:100%">${ic('out')}<span>Sair</span></button></div></aside>
@@ -192,7 +194,7 @@ function rPage(d, tab, st) {
   const mon = S.users.mon;
   if (tab === 'status') {
     const lc = lastContact(), al = openAlerts(), lv = [...S.vitals].reverse()[0], rows = agendaHoje(), nx = proximoItem();
-    return `<div class="hero ${stClass[st]}"><div class="big">${ic(st === 'ok' ? 'checkc' : 'warn')}</div><div><span class="sub" style="font-weight:700">${esc(mon.nome)}</span><h3>${stLabel[st]}</h3><div class="sub" style="color:inherit;opacity:.85;margin-top:4px">${stText[st]}</div></div>
+    return `<div class="hero ${stClass[st]}${Date.now() - (d.chgAt || 0) < 700 ? ' chg' : ''}"><div class="big">${ic(st === 'ok' ? 'checkc' : 'warn')}</div><div><span class="sub" style="font-weight:700">${esc(mon.nome)}</span><h3>${stLabel[st]}</h3><div class="sub" style="color:inherit;opacity:.85;margin-top:4px">${stText[st]}</div></div>
     <div class="row wrap" style="justify-content:flex-end"><button class="btn" data-act="tab" data-t="verificar">${ic('send')} Verificar</button><button class="btn" data-act="ligar">${ic('phone')} Ligar</button></div></div>
     <div class="tiles" style="margin-top:14px"><div class="tile"><small>Último contato</small><b style="font-size:24px">${lc ? fmt(lc.c.respondidoEm) : '—'}</b><span>${lc ? lc.txt + ' · ' + esc(lc.c.evento) : 'Nenhuma resposta hoje ainda'}</span></div>
     <div class="tile"><small>Próximo da agenda</small><b style="font-size:24px">${nx ? nx.hora : '—'}</b><span>${nx ? esc(nx.nome) : 'Nada mais por hoje'}</span></div>
@@ -265,7 +267,7 @@ function monApp(d) {
   if (tab === 'inicio') {
     const nx = proximoItem(), tot = agendaHoje().filter(r => r.tipo !== 'rotina'), done = tot.filter(r => ['tomada', 'realizado'].includes(r.estado)).length;
     page = `<div class="mcard"><div class="sub" style="font-weight:700">Agora</div><div class="bigclock" data-clock>${fmt(S.min)}</div><div class="sub" style="margin-top:6px">Sábado, 14 de novembro</div></div>
-    ${pend.length ? pend.map(p => `<div class="mcard" style="border:2px solid #e0c183;background:#FFF7E3"><div class="row"><span class="badge amber">${ic(p.k === 'checkin' ? 'bell' : p.k === 'med' ? 'pill' : 'flask')}</span><div class="grow"><h3>${esc(p.titulo)}</h3><div class="sub">${esc(p.sub)}</div></div></div><button class="mbtn ok" style="margin-top:12px" data-act="${p.k === 'checkin' ? 'openchk' : 'mtab'}" data-id="${p.id}" data-t="lembretes">${p.k === 'checkin' ? 'Responder agora' : p.k === 'med' ? 'Confirmar remédio' : 'Confirmar exame'}</button></div>`).join('') : `<div class="mcard"><div class="row"><span class="badge">${ic('checkc')}</span><div class="grow"><h3>Tudo certo por agora</h3><div class="sub">Nenhuma resposta pendente.</div></div></div></div>`}
+    ${pend.length ? pend.map(p => `<div class="mcard${isNew(d, p) ? ' new' : ''}" style="border:2px solid #e0c183;background:#FFF7E3"><div class="row"><span class="badge amber">${ic(p.k === 'checkin' ? 'bell' : p.k === 'med' ? 'pill' : 'flask')}</span><div class="grow"><h3>${esc(p.titulo)}</h3><div class="sub">${esc(p.sub)}</div></div></div><button class="mbtn ok" style="margin-top:12px" data-act="${p.k === 'checkin' ? 'openchk' : 'mtab'}" data-id="${p.id}" data-t="lembretes">${p.k === 'checkin' ? 'Responder agora' : p.k === 'med' ? 'Confirmar remédio' : 'Confirmar exame'}</button></div>`).join('') : `<div class="mcard"><div class="row"><span class="badge">${ic('checkc')}</span><div class="grow"><h3>Tudo certo por agora</h3><div class="sub">Nenhuma resposta pendente.</div></div></div></div>`}
     <div class="mcard"><div class="sub" style="font-weight:700">Próximo da sua rotina</div><h3 style="margin-top:4px">${nx ? esc(nx.nome) : 'Nada mais por hoje'}</h3><div class="sub">${nx ? 'às ' + nx.hora : 'Bom descanso.'}</div></div>
     <div class="mcard"><div class="row between"><div><h3>Lembretes de hoje</h3><div class="sub">${done} de ${tot.length} confirmados</div></div><button class="btn" data-act="mtab" data-t="lembretes">Ver</button></div></div>`;
   } else if (tab === 'lembretes') {
@@ -297,6 +299,7 @@ function monApp(d) {
   <div class="mtop"><small>${t[0]}</small><h2>${esc(t[1])}</h2></div><div class="mbody">${page}</div>
   <nav class="mnav" aria-label="Menu">${[['inicio', 'home', 'Início'], ['lembretes', 'list', 'Lembretes'], ['sinais', 'activity', 'Sinais']].map(([k, i, l]) => `<button class="${tab === k ? 'on' : ''}" data-act="mtab" data-t="${k}">${ic(i)}${l}${k === 'lembretes' && pend.filter(p => p.k !== 'checkin').length ? `<span class="n">${pend.filter(p => p.k !== 'checkin').length}</span>` : ''}</button>`).join('')}<button class="sos" data-act="sos">${ic('warn')}SOS</button></nav>${over}</div>`;
 }
+function isNew(d, p) { const m = d.pendAt || (d.pendAt = {}), k = p.k + p.id; if (!m[k]) m[k] = Date.now(); return Date.now() - m[k] < 700; }
 function checkinScreen(d) {
   const c = S.checkins.find(x => x.id === d.s.chk), done = d.s.chkDone;
   if (!c) return '';
@@ -328,7 +331,7 @@ document.addEventListener('click', e => {
     case 'demo': { const p=$('#demo'), open=!p.classList.contains('open'); p.classList.toggle('open',open); p.inert=!open; t.setAttribute('aria-expanded',String(open)); return; }
     case 'play': S.play = !S.play; return render();
     case 'adv': advance(+D.m); return;
-    case 'next': if (!nextEvent()) say(dev.desk, 'Sem mais eventos hoje.', 'amber'); return render();
+    case 'next': if (!nextEvent()) Object.values(dev).forEach(x => say(x, 'Sem mais eventos hoje.', 'amber')); return render();
     case 'sound': S.sound = !S.sound; if (S.sound) beep('checkin'); return render();
     case 'reset': S = seed(); dev.phone.s = { view: 'login', role: 'mon' }; dev.desk.s = { view: 'login', role: 'resp' }; dev.phone.toast = dev.desk.toast = null; return render();
     case 'skiplogin': loginAs(dev.phone, 'mon'); loginAs(dev.desk, 'resp'); return render();
@@ -401,6 +404,7 @@ document.addEventListener('submit', e => {
   if (k === 'resolver') { resolveAlert(+f.dataset.id, fd.nota.trim()); s.modal = null; say(d, 'Verificação registrada. Alerta encerrado.'); return render(); }
   if (k === 'verificar') { const i = +fd.preset; s.preset = i; sendVerif(PRESETS[i]); say(d, 'Verificação enviada ao celular de ' + first(S.users.mon.nome) + '.'); return render(); }
   if (k === 'limites') {
+    if (+fd.sisMin >= +fd.sisMax || +fd.diaMin >= +fd.diaMax || +fd.fcMin >= +fd.fcMax) { say(d, 'O mínimo precisa ser menor que o máximo.', 'amber'); return render(); }
     const L = S.cfg.lim; ['sisMin', 'sisMax', 'diaMin', 'diaMax', 'fcMin', 'fcMax'].forEach(x => L[x] = +fd[x]); S.cfg.timeout = +fd.timeout;
     addLog(first(S.users.resp.nome), 'Alterou limites de sinais vitais e o tempo de resposta do check-in.'); say(d, 'Limites salvos.'); return render();
   }

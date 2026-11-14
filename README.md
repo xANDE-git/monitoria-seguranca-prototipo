@@ -4,8 +4,8 @@ Trabalho acadêmico (grupo de 6). Protótipo em HTML/CSS/JS puros, sem servidor:
 Todos os dados são fictícios e ficam só na memória da página (recarregar = reiniciar).
 
 ## Como usar
-- À esquerda, celular do **monitorado**; à direita, painel do **responsável**. Os dois leem o mesmo estado: o que um faz aparece no outro.
-- Barra do topo: relógio simulado (+5 min, +1 h, próximo evento, rodar o tempo), som, reiniciar, "Entrar nos dois lados".
+- Botões **Mobile** e **Desktop** escolhem qual versão aparece (uma por vez). Qualquer perfil entra em qualquer uma; as duas leem o mesmo estado: o que um faz aparece no outro.
+- Seta **Demonstração** (canto direito) abre os controles: relógio simulado (+5 min, +1 h, próximo evento, rodar o tempo), som, reiniciar e entrar com perfis de demonstração.
 - Login de demonstração: botão "Preencher". Senha do código de recuperação: `123456`.
 
 ## O que cobre do documento
