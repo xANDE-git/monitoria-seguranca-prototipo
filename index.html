@@ -32,7 +32,7 @@
       <button class="cbtn" data-act="adv" data-m="5">+5 min</button>
       <button class="cbtn" data-act="adv" data-m="60">+1 h</button>
       <button class="cbtn" data-act="next">Próximo evento</button>
-      <button class="cbtn prim" data-act="skiplogin">Entrar nos dois lados</button>
+      <button class="cbtn prim" data-act="skiplogin">Entrar com perfis de demonstração</button>
       <button class="cbtn" id="btnSound" data-act="sound"></button>
       <button class="cbtn" data-act="reset">Reiniciar demo</button>
     </div>
@@ -41,13 +41,13 @@
 </header>
 
 <div class="switch" role="tablist" aria-label="Escolher tela">
-  <button role="tab" class="on" data-act="view" data-v="phone">Celular do monitorado<i class="dot" id="dotPhone"></i></button>
-  <button role="tab" data-act="view" data-v="desk">Painel do responsável<i class="dot" id="dotDesk"></i></button>
+  <button role="tab" class="on" data-act="view" data-v="phone">Mobile<i class="dot" id="dotPhone"></i></button>
+  <button role="tab" data-act="view" data-v="desk">Desktop<i class="dot" id="dotDesk"></i></button>
 </div>
 
 <main class="stage" id="stage" data-view="phone">
-  <section class="phonew" aria-label="Celular do monitorado">
-    <div class="dev-label">Celular do monitorado</div>
+  <section class="phonew" aria-label="Versão mobile">
+    <div class="dev-label">Mobile</div>
     <div class="phone">
       <div class="glass">
         <div class="sbar"><span data-clock>06:55</span><i class="notch"></i><span id="sigIc"></span></div>
@@ -55,8 +55,8 @@
       </div>
     </div>
   </section>
-  <section class="deskw" aria-label="Painel do responsável">
-    <div class="dev-label">Painel do responsável</div>
+  <section class="deskw" aria-label="Versão desktop">
+    <div class="dev-label">Desktop</div>
     <div class="desk">
       <div class="chrome"><span><i></i><i></i><i></i></span><div class="url" id="urlBar">monitoria.app/painel</div></div>
       <div class="screen" id="dev-desk"></div>

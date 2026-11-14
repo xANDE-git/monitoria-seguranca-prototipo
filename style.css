@@ -319,3 +319,7 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;line-height:1.15;l
 .demo-t[aria-expanded=true] .ic{transform:rotate(180deg)}
 .demo-t[aria-expanded=true]{background:var(--sage-xl)}
 @media (prefers-reduced-motion:reduce){.demo-wrap,.demo-in,.demo-t .ic{transition:none}}
+
+.screen>.mapp{max-width:560px;margin:0 auto;position:relative;background:var(--bg)}
+.screen:has(>.mapp){background:#EFE8D9}
+.screen>.mapp .mfull,.screen>.mapp .sheet-bg,.screen>.mapp .call{position:absolute}

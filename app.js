@@ -39,9 +39,9 @@ function updateBar() {
   $('#btnPlay').innerHTML = S.play ? ic('pause') + ' Pausar o tempo' : ic('play') + ' Rodar o tempo';
   $('#btnPlay').classList.toggle('on', S.play);
   $('#btnSound').innerHTML = S.sound ? ic('vol') + ' Som ligado' : ic('volx') + ' Som desligado';
-  const p = dev.phone.s.user === 'mon' && monPend().length, d = dev.desk.s.user === 'resp' && openAlerts().length;
-  $('#dotPhone').classList.toggle('show', !!p); $('#dotDesk').classList.toggle('show', !!d);
-  $('#urlBar').innerHTML = ic('lock') + ' monitoria.app/' + (dev.desk.s.user === 'resp' ? ({ status: 'painel', verificar: 'verificar', historico: 'historico', relatorio: 'relatorio-semanal', config: 'configuracoes' }[dev.desk.s.tab] || 'painel') : 'entrar');
+  const att = x => (x.s.user === 'mon' && monPend().length) || (x.s.user === 'resp' && openAlerts().length);
+  $('#dotPhone').classList.toggle('show', !!att(dev.phone)); $('#dotDesk').classList.toggle('show', !!att(dev.desk));
+  { const u = dev.desk.s.user; $('#urlBar').innerHTML = ic('lock') + ' monitoria.app/' + (u === 'resp' ? ({ status: 'painel', verificar: 'verificar', historico: 'historico', relatorio: 'relatorio-semanal', config: 'configuracoes' }[dev.desk.s.tab] || 'painel') : u === 'mon' ? 'inicio' : 'entrar'); }
 }
 hooks.changed = render;
 hooks.toast = (role, msg, kind) => {
