@@ -47,6 +47,7 @@ const ICONS = {
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
   skip: '<path d="M5 4l10 8-10 8z"/><path d="M19 5v14"/>',
   book: '<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M4 16a4 4 0 0 1 4-4h12"/>',
+  down: '<path d="M6 9l6 6 6-6"/>',
   chev: '<path d="M9 18l6-6-6-6"/>',
   pin: '<path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>'
 };

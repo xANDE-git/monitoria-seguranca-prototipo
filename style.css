@@ -44,8 +44,12 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;line-height:1.15;l
 .script li{padding-left:4px}
 
 /* ---------- palco ---------- */
-.stage{max-width:1480px;margin:0 auto;padding:18px 20px 40px;display:grid;grid-template-columns:412px minmax(0,1fr);gap:30px;align-items:start}
-.switch{display:none;max-width:1480px;margin:14px auto 0;padding:0 20px;gap:8px}
+.stage{max-width:1480px;margin:0 auto;padding:18px 20px 40px;display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:30px;align-items:start}
+.stage[data-view=phone] .deskw{display:none}
+.stage[data-view=desk] .phonew{display:none}
+.deskw{width:min(1180px,100%)}
+.dev-label{justify-content:center}
+.switch{display:flex;max-width:460px;margin:16px auto 0;padding:0 20px;gap:8px}
 .switch button{flex:1;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;font-weight:600;position:relative}
 .switch button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .switch .dot{position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:var(--terra);display:none}
@@ -306,8 +310,12 @@ h1,h2,h3,h4{font-family:var(--serif);font-weight:600;margin:0;line-height:1.15;l
   .logo small{display:none}
 }
 
-.demo{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
-.demo[hidden]{display:none}
-.demo-t .ic{transition:transform .2s}
-.demo-t[aria-expanded=true] .ic{transform:rotate(90deg)}
-@media (min-width:1101px){.demo{flex:1;justify-content:flex-end}}
+.demo-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
+.demo-wrap.open{grid-template-rows:1fr}
+.demo-clip{overflow:hidden;min-height:0}
+.demo-in{padding-top:0;padding-bottom:12px;opacity:0;transform:translateY(-6px);transition:opacity .25s ease,transform .3s ease}
+.demo-wrap.open .demo-in{opacity:1;transform:none}
+.demo-t .ic{transition:transform .3s ease}
+.demo-t[aria-expanded=true] .ic{transform:rotate(180deg)}
+.demo-t[aria-expanded=true]{background:var(--sage-xl)}
+@media (prefers-reduced-motion:reduce){.demo-wrap,.demo-in,.demo-t .ic{transition:none}}

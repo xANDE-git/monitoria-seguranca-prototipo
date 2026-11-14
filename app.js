@@ -325,7 +325,7 @@ document.addEventListener('click', e => {
   if (a === 'bg') { if (e.target !== t) return; if (d.s.modal) d.s.modal = null; if (d.s.sheet) d.s.sheet = null; return render(); }
   switch (a) {
     /* barra */
-    case 'demo': { const p=$('#demo'); p.hidden=!p.hidden; t.setAttribute('aria-expanded',String(!p.hidden)); return; }
+    case 'demo': { const p=$('#demo'), open=!p.classList.contains('open'); p.classList.toggle('open',open); p.inert=!open; t.setAttribute('aria-expanded',String(open)); return; }
     case 'play': S.play = !S.play; return render();
     case 'adv': advance(+D.m); return;
     case 'next': if (!nextEvent()) say(dev.desk, 'Sem mais eventos hoje.', 'amber'); return render();
@@ -430,7 +430,7 @@ document.addEventListener('keydown', e => {
 
 /* ---------- início ---------- */
 dev.phone.el = $('#dev-phone'); dev.desk.el = $('#dev-desk');
-$('#logoMark').innerHTML = logo(); $('#demoToggle').innerHTML = ic('chev') + ' Demonstração';
+$('#logoMark').innerHTML = logo(); $('#demoToggle').innerHTML = ic('down') + ' Demonstração';
 document.querySelector('link[rel=icon]').href = LOGO; $('#barClockIc').innerHTML = ic('clock'); $('#sigIc').innerHTML = ic('signal');
 setInterval(() => { if (S.play) advance(1); }, 2000);
 render();
