@@ -146,7 +146,7 @@ function vitalChart(from, keys, label) {
     g += `<polyline pathLength="1" fill="none" stroke="${k.color}" stroke-width="2.2" stroke-linejoin="round" points="${vs.map(v => X(v) + ',' + Y(v[k.k])).join(' ')}"/>`;
     vs.forEach(v => { const out = v[k.k] > k.max || v[k.k] < k.min; g += `<circle cx="${X(v)}" cy="${Y(v[k.k])}" r="${out ? 6 : 4}" fill="${out ? '#B4432C' : k.color}" stroke="#fff" stroke-width="2"><title>${dayLabel(v.d)} ${v.hora}: ${v[k.k]}${out ? ' (fora do limite)' : ''}</title></circle>${out ? `<text x="${X(v)}" y="${Y(v[k.k]) - 10}" text-anchor="middle" style="fill:#8F3220;font-weight:700">${v[k.k]}</text>` : ''}`; });
   });
-  return `<div class="legend">${keys.map(k => `<span><i style="background:${k.color}"></i>${k.name} · faixa ${k.min}–${k.max}</span>`).join('')}<span><i style="background:#B4432C"></i>fora do limite</span></div><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${g}</svg>`;
+  return `<div class="legend">${keys.map(k => `<span><i style="background:${k.color}"></i>${k.name} · Faixa ${k.min}–${k.max}</span>`).join('')}<span><i style="background:#B4432C"></i>Fora do limite</span></div><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${g}</svg>`;
 }
 function wakeChart(from) {
   const W = 640, H = 150, pl = 40, pr = 10, pt = 18, pb = 24, days = []; for (let i = from; i <= TD; i++) days.push(i);
@@ -160,7 +160,7 @@ function wakeChart(from) {
     if (c) g += `<line x1="${cx}" x2="${cx}" y1="${Y(lo)}" y2="${Y(c.respondidoEm)}" stroke="#bcd2c3" stroke-width="3"/><circle cx="${cx}" cy="${Y(c.respondidoEm)}" r="5" fill="#47735D" stroke="#fff" stroke-width="2"/><text x="${cx}" y="${Y(c.respondidoEm) - 9}" text-anchor="middle" style="fill:#335644;font-weight:700">${fmt(c.respondidoEm)}</text>`;
     else g += `<text x="${cx}" y="${Y(lo) + 14}" text-anchor="middle">—</text>`;
   });
-  return `<div class="legend"><span><i style="background:#47735D"></i>horário em que respondeu “Acordar” · linha tracejada = horário da rotina</span></div><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Horários em que o monitorado acordou">${g}</svg>`;
+  return `<div class="legend"><span><i style="background:#47735D"></i>Horário em que respondeu “Acordar” · A linha tracejada é o horário da rotina</span></div><svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Horários em que o monitorado acordou">${g}</svg>`;
 }
 function medGrid(from) {
   let h = `<div class="mgrid"><span></span>${S.cfg.meds.map(m => `<span class="sub" style="font-weight:700;font-size:12px">${esc(m.nome.split(' ')[0])}<br>${m.hora}</span>`).join('')}`;
@@ -168,12 +168,12 @@ function medGrid(from) {
     h += `<span class="d">${dayLabel(d)}</span>`;
     S.cfg.meds.forEach(m => {
       const t = S.medTakes.find(x => x.d === d && x.medId === m.id);
-      if (!t || t.status === 'aguardando') h += `<span class="mdot wait">${d === TD ? 'a vir' : '—'}</span>`;
+      if (!t || t.status === 'aguardando') h += `<span class="mdot wait">${d === TD ? 'A vir' : '—'}</span>`;
       else if (t.status === 'tomada') h += `<span class="mdot ${t.atraso ? 'late' : ''}">${fmt(t.em)}${t.atraso ? ' ⏱' : ''}</span>`;
-      else h += `<span class="mdot miss">${t.status === 'atrasada' ? 'atrasada' : 'não confirmou'}</span>`;
+      else h += `<span class="mdot miss">${t.status === 'atrasada' ? 'Atrasada' : 'Não confirmou'}</span>`;
     });
   }
-  return h + '</div><div class="legend" style="margin-top:10px"><span><i style="background:#DDE9E0"></i>tomada no prazo</span><span><i style="background:#F7E8C8"></i>tomada com atraso</span><span><i style="background:#F5DAD2"></i>não confirmada</span></div>';
+  return h + '</div><div class="legend" style="margin-top:10px"><span><i style="background:#DDE9E0"></i>Tomada no prazo</span><span><i style="background:#F7E8C8"></i>Tomada com atraso</span><span><i style="background:#F5DAD2"></i>Não confirmada</span></div>';
 }
 
 /* ---------- painel do responsável ---------- */
@@ -207,6 +207,8 @@ function rPage(d, tab, st) {
     const vs = today(S.checkins).filter(c => c.tipo === 'verificacao').reverse(), sel = d.s.preset ?? 0;
     return `<div class="two"><div class="card"><h3>Mensagem</h3><p class="sub" style="margin:0 0 12px">${esc(first(mon.nome))} recebe uma notificação com som no celular.</p>
     <form data-form="verificar">${PRESETS.map((p, i) => `<label class="radio"><input type="radio" name="preset" value="${i}" ${i === sel ? 'checked' : ''}>${esc(p)}</label>`).join('')}
+    <label class="radio"><input type="radio" name="preset" value="custom" ${sel === 'custom' ? 'checked' : ''}>Escrever minha própria mensagem</label>
+    <div class="field custom"><label for="${d.id}-custom" class="sr">Sua mensagem</label><textarea id="${d.id}-custom" name="custom" maxlength="140" placeholder="Escreva a mensagem que ${esc(first(mon.nome))} vai receber (até 140 caracteres)"></textarea></div>
     <button class="btn primary block" style="margin-top:6px;min-height:48px">${ic('send')} Enviar verificação</button></form>
     <p class="sub" style="margin-top:12px">Sem resposta em ${S.cfg.timeout} minutos, o status muda para <b>Pendente</b> e você é avisado.</p></div>
     <div class="card"><h3>Verificações de hoje</h3>${vs.length ? vs.map(c => `<div class="lrow"><span class="time">${c.hora}</span><div class="grow"><div class="t">${esc(c.texto)}</div><div class="sub">${c.estado === 'aberto' ? 'Aguardando resposta' : c.estado === 'sem' ? 'Sem resposta no prazo' : 'Respondeu às ' + fmt(c.respondidoEm)}</div></div>${{ aberto: '<span class="pill amber">Aguardando</span>', sem: '<span class="pill terra">Sem resposta</span>', bem: '<span class="pill">Estou bem</span>', mal: '<span class="pill amber">Não estou bem</span>', ajuda: '<span class="pill terra">Preciso de ajuda</span>' }[c.estado]}</div>`).join('') : '<div class="empty">Nenhuma verificação enviada hoje.</div>'}</div></div>`;
@@ -222,12 +224,12 @@ function rPage(d, tab, st) {
   if (tab === 'relatorio') {
     const r = relatorio(0), mx = Math.max(1, ...Object.values(r.porTipo));
     return `<div class="tiles"><div class="tile"><small>Check-ins respondidos</small><b>${r.feitos}<span style="font-size:15px"> de ${r.total}</span></b><span>${r.sem} sem resposta</span></div>
-    <div class="tile"><small>Adesão aos check-ins</small><b>${r.adesao}%</b><span>respondidos no prazo</span></div>
+    <div class="tile"><small>Adesão aos check-ins</small><b>${r.adesao}%</b><span>Respondidos no prazo</span></div>
     <div class="tile"><small>Alertas gerados</small><b>${r.alertas.length}</b><span>${r.alertas.filter(a => a.aberto).length} aberto(s)</span></div>
-    <div class="tile"><small>Emergências (SOS)</small><b>${r.sos}</b><span>acionamentos na semana</span></div></div>
+    <div class="tile"><small>Emergências (SOS)</small><b>${r.sos}</b><span>Acionamentos na semana</span></div></div>
     <div class="two" style="margin-top:14px"><div class="card"><h3>Alertas por tipo</h3><div class="bars" style="margin-top:12px">${Object.keys(ALERT_T).filter(k => r.porTipo[k]).map(k => `<div class="bar-r"><span>${ALERT_T[k]}</span><i><u style="width:${r.porTipo[k] / mx * 100}%;background:${k === 'sos' ? '#B4432C' : k === 'vital' ? '#B8780F' : '#47735D'}"></u></i><b>${r.porTipo[k]}</b></div>`).join('') || '<div class="empty">Sem alertas.</div>'}</div></div>
     <div class="card"><h3>Medicações e exames</h3><div class="bars" style="margin-top:12px"><div class="bar-r"><span>Medicações confirmadas</span><i><u style="width:${r.medTotal ? r.medOk / r.medTotal * 100 : 0}%"></u></i><b>${r.medOk}</b></div><div class="bar-r"><span>Medicações pendentes</span><i><u style="width:${r.medTotal ? r.medPend / r.medTotal * 100 : 0}%;background:#B4432C"></u></i><b>${r.medPend}</b></div><div class="bar-r"><span>Exames realizados</span><i><u style="width:${(r.exOk + r.exPend) ? r.exOk / (r.exOk + r.exPend) * 100 : 0}%"></u></i><b>${r.exOk}</b></div><div class="bar-r"><span>Exames pendentes</span><i><u style="width:${(r.exOk + r.exPend) ? r.exPend / (r.exOk + r.exPend) * 100 : 0}%;background:#B4432C"></u></i><b>${r.exPend}</b></div></div></div></div>
-    <div class="two" style="margin-top:14px"><div class="card"><h3>Sinais vitais</h3><div class="tiles" style="margin-top:10px"><div class="tile"><small>Pressão média</small><b style="font-size:24px">${r.sis ? r.sis + '/' + r.dia : '—'}</b><span>${r.vs.length} medições</span></div><div class="tile"><small>Frequência média</small><b style="font-size:24px">${r.fc ?? '—'}</b><span>bpm · ${r.vForaDoLimite} fora do limite</span></div></div></div>
+    <div class="two" style="margin-top:14px"><div class="card"><h3>Sinais vitais</h3><div class="tiles" style="margin-top:10px"><div class="tile"><small>Pressão média</small><b style="font-size:24px">${r.sis ? r.sis + '/' + r.dia : '—'}</b><span>${r.vs.length} medições</span></div><div class="tile"><small>Frequência média</small><b style="font-size:24px">${r.fc ?? '—'}</b><span>Média em bpm · ${r.vForaDoLimite} fora do limite</span></div></div></div>
     <div class="card"><h3>Ocorrências</h3><p class="sub" style="margin:0 0 6px">Situações em que você precisou intervir.</p>${r.ocorr.length ? [...r.ocorr].sort((a, b) => b.d - a.d).slice(0, 5).map(a => `<div class="lrow"><div class="grow"><div class="t">${esc(a.titulo)} <span class="sub">· ${dayLabel(a.d)} ${a.hora}</span></div><div class="sub">${esc(a.nota)}</div></div></div>`).join('') : '<div class="empty">Nenhuma ocorrência.</div>'}</div></div>`;
   }
   /* config */
@@ -402,7 +404,12 @@ document.addEventListener('submit', e => {
     S.users[who].senha = fd.senha; s.view = 'login'; s.role = who; s.err = null; s.ok = 'Senha redefinida. Entre com a nova senha.'; return render();
   }
   if (k === 'resolver') { resolveAlert(+f.dataset.id, fd.nota.trim()); s.modal = null; say(d, 'Verificação registrada. Alerta encerrado.'); return render(); }
-  if (k === 'verificar') { const i = +fd.preset; s.preset = i; sendVerif(PRESETS[i]); say(d, 'Verificação enviada ao celular de ' + first(S.users.mon.nome) + '.'); return render(); }
+  if (k === 'verificar') {
+    const custom = fd.preset === 'custom', txt = custom ? (fd.custom || '').trim() : PRESETS[+fd.preset];
+    s.preset = custom ? 'custom' : +fd.preset;
+    if (!txt) { say(d, 'Escreva a mensagem antes de enviar.', 'amber'); return render(); }
+    if (custom) f.querySelector('[name=custom]').value = '';
+    sendVerif(txt); say(d, 'Verificação enviada ao celular de ' + first(S.users.mon.nome) + '.'); return render(); }
   if (k === 'limites') {
     if (+fd.sisMin >= +fd.sisMax || +fd.diaMin >= +fd.diaMax || +fd.fcMin >= +fd.fcMax) { say(d, 'O mínimo precisa ser menor que o máximo.', 'amber'); return render(); }
     const L = S.cfg.lim; ['sisMin', 'sisMax', 'diaMin', 'diaMax', 'fcMin', 'fcMax'].forEach(x => L[x] = +fd[x]); S.cfg.timeout = +fd.timeout;
