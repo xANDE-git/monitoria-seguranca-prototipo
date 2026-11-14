@@ -24,6 +24,7 @@ function render() {
       if (!(i.name in keep)) return;
       if (i.type === 'radio') i.checked = i.value === keep[i.name]; else if (i.type !== 'checkbox') i.value = keep[i.name];
     });
+    el.querySelectorAll('.field > label:not([for])').forEach((l, n) => { const c = l.parentElement.querySelector('input,select,textarea'); if (!c) return; if (!c.id) c.id = d.id + '-f' + n; l.htmlFor = c.id; });
     const used = {};
     el.querySelectorAll('.scroll,.rbody,.mbody,.auth,.auth-form,.mfull,.modal').forEach(n => {
       const f = scrolls.find(([c]) => c === n.className && !used[c]); if (f) { used[f[0]] = 1; n.scrollTop = f[1]; }
@@ -325,7 +326,7 @@ function devOf(t) { const sc = t.closest('.screen'); return sc ? dev[sc.id.repla
 function loginAs(d, role) { d.s = { view: 'login', role, user: role, tab: role === 'resp' ? 'status' : 'inicio' }; }
 
 document.addEventListener('click', e => {
-  if (e.target.closest('#stage')) document.body.classList.add('focus');
+  if (e.target.closest('#stage')) { document.body.classList.add('focus'); document.body.classList.remove('peek'); const ae = document.activeElement; if (ae && ae.closest && ae.closest('#top')) ae.blur(); }
   else if (!e.target.closest('#top,#topTab')) document.body.classList.remove('peek');
   const t = e.target.closest('[data-act]'); if (!t) return;
   const a = t.dataset.act, d = devOf(t), D = t.dataset;

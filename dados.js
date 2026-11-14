@@ -178,7 +178,7 @@ function monPend() {
     k: 'checkin', id: c.id, titulo: c.tipo === 'verificacao' ? 'Sua família quer saber de você' : 'Check-in: ' + c.evento,
     sub: c.tipo === 'verificacao' ? '“' + c.texto + '”' : 'Toque para responder', prazo: c.prazo
   }));
-  today(S.medTakes).filter(t => t.status === 'aguardando' || t.status === 'atrasada').forEach(t => p.push({ k: 'med', id: t.id, titulo: 'Hora do remédio', sub: t.nome + ' · ' + t.hora }));
+  today(S.medTakes).filter(t => t.status === 'aguardando' || t.status === 'atrasada').forEach(t => p.push({ k: 'med', id: t.id, titulo: t.status === 'atrasada' ? 'Remédio atrasado' : 'Hora do remédio', sub: t.nome + ' · ' + t.hora }));
   today(S.examEntries).filter(t => t.status === 'aguardando').forEach(t => p.push({ k: 'exame', id: t.id, titulo: 'Hora do exame', sub: t.nome + ' · ' + t.hora }));
   return p;
 }
