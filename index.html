@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#F6F1E7">
+<title>Monitoria e Segurança · Protótipo</title>
+<meta name="description" content="Protótipo navegável do sistema de monitoria e segurança: check-ins, medicações, sinais vitais, alertas e SOS, com a tela do monitorado e o painel do responsável funcionando juntos.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2347735D'/%3E%3Cpath d='M16 25s8-4 8-10V9l-8-3-8 3v6c0 6 8 10 8 10z' fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round'/%3E%3Cpath d='M12 15l3 3 5-6' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="logo">
+      <span class="logo-mark" id="logoMark"></span>
+      <div><b>Monitoria e Segurança</b><small>Protótipo navegável · dados fictícios</small></div>
+    </div>
+    <div class="clock" title="Relógio da simulação">
+      <span id="barClockIc"></span>
+      <strong data-clock>06:55</strong>
+      <span>sáb, 14 nov · simulação</span>
+    </div>
+    <div class="ctrls" role="group" aria-label="Controles da demonstração">
+      <button class="cbtn" id="btnPlay" data-act="play"></button>
+      <button class="cbtn" data-act="adv" data-m="5">+5 min</button>
+      <button class="cbtn" data-act="adv" data-m="60">+1 h</button>
+      <button class="cbtn" data-act="next">Próximo evento</button>
+      <button class="cbtn prim" data-act="skiplogin">Entrar nos dois lados</button>
+      <button class="cbtn" id="btnSound" data-act="sound"></button>
+      <button class="cbtn" data-act="reset">Reiniciar demo</button>
+    </div>
+  </div>
+</header>
+
+<div class="switch" role="tablist" aria-label="Escolher tela">
+  <button role="tab" class="on" data-act="view" data-v="phone">Celular do monitorado<i class="dot" id="dotPhone"></i></button>
+  <button role="tab" data-act="view" data-v="desk">Painel do responsável<i class="dot" id="dotDesk"></i></button>
+</div>
+
+<main class="stage" id="stage" data-view="phone">
+  <section class="phonew" aria-label="Celular do monitorado">
+    <div class="dev-label">Celular do monitorado</div>
+    <div class="phone">
+      <div class="glass">
+        <div class="sbar"><span data-clock>06:55</span><i class="notch"></i><span id="sigIc"></span></div>
+        <div class="screen" id="dev-phone"></div>
+      </div>
+    </div>
+  </section>
+  <section class="deskw" aria-label="Painel do responsável">
+    <div class="dev-label">Painel do responsável</div>
+    <div class="desk">
+      <div class="chrome"><span><i></i><i></i><i></i></span><div class="url" id="urlBar">monitoria.app/painel</div></div>
+      <div class="screen" id="dev-desk"></div>
+    </div>
+  </section>
+</main>
+
+<script src="logo.js"></script>
+<script src="dados.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
